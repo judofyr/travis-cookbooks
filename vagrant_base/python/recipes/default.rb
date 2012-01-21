@@ -1,9 +1,10 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Seth Chisamore <schisamo@opscode.com>, Travis CI Development Team
 # Cookbook Name:: python
 # Recipe:: default
 #
 # Copyright 2011, Opscode, Inc.
+# Copyright 2012, Travis CI Development Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "python::#{node['python']['install_method']}"
+include_recipe "python::package"
 include_recipe "python::pip"
 include_recipe "python::virtualenv"

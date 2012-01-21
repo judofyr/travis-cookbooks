@@ -1,7 +1,7 @@
 #
-# Cookbook Name:: python::dead_snakes_ppa
-# Recipe:: default
-# Copyright 2011, Michael S. Klishin & Travis CI development team
+# Cookbook Name:: python
+# Recipe:: multi
+# Copyright 2011-2012, Michael S. Klishin & Travis CI Development Team
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,53 +21,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-case node['platform']
-when "ubuntu"
-  apt_repository "fkrull_deadsnakes" do
-    uri          "http://ppa.launchpad.net/fkrull/deadsnakes/ubuntu"
-    distribution node['lsb']['codename']
-    components   ['main']
+include_recipe "pythonbrew"
 
-    action :add
-  end
-end
-
-python_pkgs = value_for_platform(
-  ["debian","ubuntu"] => {
-    "default" => (%w(python-dev) + node.python.multi.pythons)
-  }
-)
-
-python_pkgs.each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
-
-include_recipe "python::pip"
-include_recipe "python::virtualenv"
-
-# not a good practice but sufficient for travis-ci.org needs, so lets keep it
-# hardcoded. MK.
-installation_root = "/home/vagrant/virtualenv"
-
-directory(installation_root) do
-  owner "vagrant"
-  group "vagrant"
-  mode  "0755"
+pythonbrew_python "2.6" do
+  owner node.travis_build_environment.user
+  group node.travis_build_environment.group
 
   action :create
-end
-
-
-node.python.multi.pythons.each do |py|
-  python_virtualenv "/home/vagrant" do
-    owner       "vagrant"
-    group       "vagrant"
-    interpreter py
-    path        "#{installation_root}/#{py}"
-
-    action :create
-  end
 end
